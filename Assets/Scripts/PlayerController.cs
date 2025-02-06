@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections.LowLevel.Unsafe;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 
 // PlayerController 스크립트 
@@ -15,7 +16,12 @@ public class PlayerController : MonoBehaviour
 
     private float speed = 3f;
 
-    private float x;
+    private float moveDirection = 0f;
+
+    private bool isLeftPressed = false;
+    private bool isRightPressed = false;
+
+
 
     private void Awake()
     {
@@ -32,8 +38,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        x = Input.GetAxis("Horizontal");
-
         if (GameManager.instance.stopTrigger)
         {
             animator.SetTrigger("start");
@@ -53,16 +57,17 @@ public class PlayerController : MonoBehaviour
 
     private void PlayerMove()
     {
-        animator.SetFloat("speed", Mathf.Abs(x));
-        if (x < 0)
+        animator.SetFloat("speed", Mathf.Abs(moveDirection));
+
+        if (moveDirection < 0)
         {
             spriteRenderer.flipX = true;
         }
-        else if (x > 0)
+        else if (moveDirection > 0)
         {
             spriteRenderer.flipX = false;
         }
-        rigid.velocity = new Vector2(x * speed, rigid.velocity.y);
+        rigid.velocity = new Vector2(moveDirection * speed, rigid.velocity.y);
     }
 
     // 캐릭터가 화면밖으로 나가지 못하도록 막음 
@@ -73,5 +78,41 @@ public class PlayerController : MonoBehaviour
         if (worldPos.x < 0.05f) worldPos.x = 0.05f;
         if (worldPos.x > 0.95f) worldPos.x = 0.95f;
         this.transform.position = Camera.main.ViewportToWorldPoint(worldPos);
+    }
+
+    // 버튼을 통해 이동방향 설정
+
+    // 좌측 
+    public void MoveLeft()
+    {
+        isLeftPressed = true;
+        moveDirection = -1f;
+    }
+
+    public void MoveRight()
+    {
+        isRightPressed = true;
+        moveDirection = 1f;
+    }
+
+
+
+    // 버튼에서 손을 뗄 때 체크 후 이동 방향 유지
+    public void StopMoveLeft()
+    {
+        isLeftPressed = false;
+        if (!isRightPressed) // 오른쪽 버튼이 눌린 상태가 아니면 멈춤
+        {
+            moveDirection = 0f;
+        }
+    }
+
+    public void StopMoveRight()
+    {
+        isRightPressed = false;
+        if (!isLeftPressed) // 왼쪽 버튼이 눌린 상태가 아니면 멈춤
+        {
+            moveDirection = 0f;
+        }
     }
 }
