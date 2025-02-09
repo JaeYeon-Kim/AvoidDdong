@@ -1,10 +1,24 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
+
+    // 라운드 설정 클래스 
+    [Serializable]
+    public class RoundSettings
+    {
+        public GameObject poopPrefab;       // 사용할 똥 프리팹
+        public float poopSpeed;       // 똥 낙하 속도 
+        public float spawnInterval;     // 똥 생성 주기 
+
+        public int requiredScore;       // 다음 라운드로 넘어가기 위한 점수 
+    }
+
 
     private static GameManager _instance;
     public static GameManager instance
@@ -28,6 +42,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject panel;
 
     [SerializeField] private SoundManager soundManager;
+
+    // 라운드 설정 리스트 및 현재 라운드 지정
+    [SerializeField] private List<RoundSettings> rounds;        // 라운드 설정 리스트 
+    private int currentRound;   // 현재 라운드 
+
 
     private int score;
     public bool stopTrigger = true;
@@ -54,12 +73,14 @@ public class GameManager : MonoBehaviour
     public void Score()
     {
         score++;
-       // Debug.Log("score " + score);
+        CheckRound();
+
     }
 
     public void GameStart()
     {
         score = 0;
+        currentRound = 0;
         stopTrigger = true;
         poopObjects.Clear();
         StartCoroutine(CreatePoopRoutine());
@@ -74,6 +95,8 @@ public class GameManager : MonoBehaviour
         StopCoroutine(CreatePoopRoutine());
         soundManager.Stop();
 
+        panel.SetActive(true);
+
         if (score >= PlayerPrefs.GetInt("BestScore", 0))
         {
             PlayerPrefs.SetInt("BestScore", score);
@@ -83,7 +106,7 @@ public class GameManager : MonoBehaviour
 
         bestScoreText.text = $"Best Score {PlayerPrefs.GetInt("BestScore", 0)}";
 
-        panel.SetActive(true);
+
 
 
         // 생성된 똥 오브젝트 들 삭제
@@ -96,13 +119,26 @@ public class GameManager : MonoBehaviour
 
     private void CreatePoop()
     {
-        // Camera.main.ViewportToWorldPoint: 메인 카메라 공간을 월드 좌표로 변경해줌 , Viewport에서 카메라의 좌측끝이0, 우측끝이1
-        Vector3 pos = Camera.main.ViewportToWorldPoint(new Vector3(UnityEngine.Random.Range(0.0f, 1.0f), 1.1f, 0));
+        // Camera.main.ViewportToWorldPoint: 메인 카메라 공간을 월드 좌표로 변경해줌
+        // 1.1: 화면 1.0보다 살짝 높은곳에서 똥을 생성하여 자연스럽게 떨어지도록 설정 
+        Vector3 pos = Camera.main.ViewportToWorldPoint(new Vector3(UnityEngine.Random.Range(0.1f, 0.9f), 1.1f, 0));
         pos.z = 0.0f;
-        GameObject newPoop = Instantiate(poop, pos, Quaternion.identity);
 
+        GameObject newPoop = Instantiate(rounds[currentRound].poopPrefab, pos, Quaternion.identity);
+        newPoop.GetComponent<Poop>().SetSpeed(rounds[currentRound].poopSpeed);
         // 생성된 poop 오브젝트를 리스트에 추가
         poopObjects.Add(newPoop);
+    }
+
+    private void CheckRound()
+    {
+        // 현재 라운드의 다음 라운드로 넘어갈 점수를 확인
+        if (currentRound < rounds.Count - 1 && score >= rounds[currentRound + 1].requiredScore)
+        {
+            currentRound++;
+
+        }
+
     }
 
     IEnumerator CreatePoopRoutine()
@@ -110,7 +146,7 @@ public class GameManager : MonoBehaviour
         while (stopTrigger)
         {
             CreatePoop();
-            yield return new WaitForSeconds(0.4f);      // 똥 생성 주기 조절 
+            yield return new WaitForSeconds(rounds[currentRound].spawnInterval);      // 똥 생성 주기 조절 
         }
 
     }

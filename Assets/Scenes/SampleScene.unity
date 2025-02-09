@@ -366,7 +366,7 @@ GameObject:
   - component: {fileID: 271101931}
   - component: {fileID: 271101930}
   m_Layer: 0
-  m_Name: Grid
+  m_Name: Bottom
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -808,6 +808,7 @@ GameObject:
   - component: {fileID: 741237830}
   - component: {fileID: 741237835}
   - component: {fileID: 741237836}
+  - component: {fileID: 741237837}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -841,7 +842,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!61 &741237831
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -849,7 +850,7 @@ BoxCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 741237829}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
@@ -948,8 +949,8 @@ Transform:
   m_GameObject: {fileID: 741237829}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.01, z: 0}
-  m_LocalScale: {x: 3, y: 3, z: 1}
+  m_LocalPosition: {x: 0, y: -2.013, z: 0}
+  m_LocalScale: {x: 2.5, y: 2.5, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -987,6 +988,41 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!70 &741237837
+CapsuleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 741237829}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0.0036211684, y: -0.013760418}
+  m_Size: {x: 0.20724232, y: 0.27509743}
+  m_Direction: 0
 --- !u!1 &759007827
 GameObject:
   m_ObjectHideFlags: 0
@@ -2222,7 +2258,28 @@ MonoBehaviour:
   currentScoreText: {fileID: 1624194986}
   panel: {fileID: 969339848}
   soundManager: {fileID: 1578310834}
-  stopTrigger: 1
+  rounds:
+  - poopPrefab: {fileID: 3926601085394929133, guid: 578757af8eae94ddfb14fcd8eb23891b, type: 3}
+    poopSpeed: 3
+    spawnInterval: 0.8
+    requiredScore: 10
+  - poopPrefab: {fileID: 1864139360315680718, guid: dcee150e7970b43b4848c48bd178421f, type: 3}
+    poopSpeed: 3.5
+    spawnInterval: 0.7
+    requiredScore: 20
+  - poopPrefab: {fileID: 1173742013033130978, guid: 57a6759c1df8c4b23bfc1453e78979e2, type: 3}
+    poopSpeed: 4
+    spawnInterval: 0.6
+    requiredScore: 30
+  - poopPrefab: {fileID: 6722374553896800174, guid: 030e4428621214dfa8295da254cc6bf1, type: 3}
+    poopSpeed: 4.5
+    spawnInterval: 0.5
+    requiredScore: 40
+  - poopPrefab: {fileID: 841807659646784565, guid: cd47331c9e459468593f1d4866a84887, type: 3}
+    poopSpeed: 5
+    spawnInterval: 0.4
+    requiredScore: 50
+  stopTrigger: 0
 --- !u!4 &1354853682
 Transform:
   m_ObjectHideFlags: 0
